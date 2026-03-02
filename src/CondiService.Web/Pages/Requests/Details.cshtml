@@ -1,0 +1,130 @@
+@page "{id:int}"
+@model CondiService.Web.Pages.Requests.DetailsModel
+@using CondiService.Web.Services
+@{
+    ViewData["Title"] = $"Заявка №{Model.Item.Id}";
+    var dueLocal = Model.Item.DueAt.ToLocalTime();
+    var isOverdue = Model.Item.Status != CondiService.Web.Models.RequestStatus.Completed && dueLocal.Date < DateTime.Now.Date;
+}
+
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+    <div>
+        <h1 class="h1">Заявка №@Model.Item.Id</h1>
+        <div class="muted">Создана @Model.Item.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm") · Дедлайн @dueLocal.ToString("yyyy-MM-dd") @if (isOverdue) { <span class="badge badge--danger">Просрочено</span> }</div>
+    </div>
+    <div class="actions">
+        <a class="btn btn--ghost" asp-page="/Requests/Index">Назад</a>
+        @if (Model.CanEdit)
+        {
+            <a class="btn" asp-page="/Requests/Edit" asp-route-id="@Model.Item.Id">Редактировать</a>
+        }
+        @if (Model.CanDelete)
+        {
+            <a class="btn btn--danger" asp-page="/Requests/Delete" asp-route-id="@Model.Item.Id">Удалить</a>
+        }
+    </div>
+</div>
+
+<div class="grid grid--2" style="margin-top:14px;">
+    <div class="card">
+        <div class="muted">Оборудование</div>
+        <div style="margin-top:10px;">
+            <div><b>@Model.Item.EquipmentType</b></div>
+            <div class="muted">@Model.Item.DeviceModel</div>
+        </div>
+
+        <div class="muted" style="margin-top:14px;">Клиент</div>
+        <div style="margin-top:10px;">
+            <div>@Model.Item.CustomerFullName</div>
+            <div class="muted">@Model.Item.CustomerPhone</div>
+        </div>
+
+        <div class="muted" style="margin-top:14px;">Статус</div>
+        <div style="margin-top:10px;">@Html.Raw(Model.StatusBadge(Model.Item.Status))</div>
+
+        <div class="muted" style="margin-top:14px;">Исполнитель</div>
+        <div style="margin-top:10px;">@(Model.Item.AssignedSpecialist?.FullName ?? "–")</div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Item.RepairParts))
+        {
+            <div class="muted" style="margin-top:14px;">Комплектующие</div>
+            <div style="margin-top:10px;">@Model.Item.RepairParts</div>
+        }
+    </div>
+
+    <div class="card">
+        <div class="muted">Описание проблемы</div>
+        <div style="margin-top:10px;white-space:pre-wrap;">@Model.Item.ProblemDescription</div>
+
+        @if (Model.Item.Status == RequestStatus.Completed && Model.Item.CompletedAt != null)
+        {
+            <div class="muted" style="margin-top:14px;">Дата завершения</div>
+            <div style="margin-top:10px;">@Model.Item.CompletedAt.Value.ToLocalTime().ToString("yyyy-MM-dd")</div>
+        }
+
+        <hr style="border:0;border-top:1px solid #22304d;margin:18px 0;" />
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+            <div>
+                <div class="muted">Комментарии специалиста</div>
+                <div class="muted small">Комментарий виден всем, но добавлять могут только специалисты/менеджер.</div>
+            </div>
+        </div>
+
+        <div style="margin-top:12px;display:grid;gap:10px;">
+            @foreach (var c in Model.Item.Comments.OrderByDescending(x => x.CreatedAt))
+            {
+                <div class="note">
+                    <div class="muted small" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">@c.AuthorUser?.FullName – @c.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                        @if (c.Type == CondiService.Web.Models.CommentType.HelpRequest) { <span class="badge badge--warn">Запрос помощи</span> }
+                        @if (c.Type == CondiService.Web.Models.CommentType.QualityManager) { <span class="badge">Качество</span> }
+                    </div>
+                    <div style="margin-top:6px;white-space:pre-wrap;">@c.Message</div>
+                </div>
+            }
+
+            @if (!Model.Item.Comments.Any())
+            {
+                <div class="alert alert--info">Комментариев пока нет.</div>
+            }
+        </div>
+
+        @if (Model.CanComment)
+        {
+            <form method="post" asp-page-handler="AddComment" class="form" style="margin-top:14px;">
+                <input type="hidden" name="id" value="@Model.Item.Id" />
+                <label class="field">
+                    <span class="field__label">Добавить комментарий</span>
+                    <textarea class="input" name="message" maxlength="500" required></textarea>
+                </label>
+                <div class="actions" style="margin-top:6px;">
+                    <button class="btn" type="submit">Добавить</button>
+                    @if (Model.CanHelpRequest)
+                    {
+                        <button class="btn btn--warn" type="submit" formaction="@Url.Page("/Requests/Details", "Help")">Запросить помощь</button>
+                    }
+                </div>
+            </form>
+        }
+    </div>
+</div>
+@if (Model.Item.Status == CondiService.Web.Models.RequestStatus.Completed)
+{
+    <div class="card" style="margin-top:14px;">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Оценка качества</div>
+                <div class="card-subtitle">Сканируйте QR или откройте форму</div>
+            </div>
+            <a class="btn btn-primary" href="@CondiService.Web.Pages.Requests.DetailsModel.SurveyUrl" target="_blank">Открыть опрос</a>
+        </div>
+        <div class="card-body" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+            <img src="@Url.Page("/Requests/Details", "SurveyQr", new { id = Model.Item.Id })"
+                 alt="QR для опроса"
+                 style="width:220px;height:220px;border-radius:16px;border:1px solid var(--border);background:#fff;padding:10px;" />
+            <div class="help">
+                Если камера не цепляет – нажмите “Открыть опрос”.
+            </div>
+        </div>
+    </div>
+}

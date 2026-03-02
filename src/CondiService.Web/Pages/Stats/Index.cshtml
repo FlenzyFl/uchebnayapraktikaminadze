@@ -1,0 +1,49 @@
+@page
+@model CondiService.Web.Pages.Stats.IndexModel
+@{
+    ViewData["Title"] = "Статистика";
+}
+
+<h1 class="h1">Статистика отдела обслуживания</h1>
+
+<div class="grid grid--2" style="margin-top:14px;">
+    <div class="card">
+        <div class="muted">Количество выполненных заявок</div>
+        <div style="font-size:2rem;font-weight:800;margin-top:6px;">@Model.CompletedCount</div>
+        <div class="muted" style="margin-top:10px;">Всего заявок: @Model.TotalCount</div>
+    </div>
+
+    <div class="card">
+        <div class="muted">Среднее время выполнения</div>
+        <div style="font-size:2rem;font-weight:800;margin-top:6px;">@Model.AverageCompletionTime</div>
+        <div class="muted" style="margin-top:10px;">Считается как разница между датой создания и датой завершения.</div>
+    </div>
+</div>
+
+<div class="card" style="margin-top:14px;">
+    <h2 class="h2">Статистика по типам неисправностей</h2>
+    <div class="muted">Группировка по точному тексту поля «Описание проблемы» (как в ТЗ – без магии и гадания).</div>
+
+    <table class="table" style="margin-top:12px;">
+        <thead>
+            <tr>
+                <th>Неисправность</th>
+                <th>Кол-во</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var row in Model.ProblemStats)
+        {
+            <tr>
+                <td>@row.Problem</td>
+                <td><span class="badge">@row.Count</span></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    @if (!Model.ProblemStats.Any())
+    {
+        <div class="alert alert--info">Недостаточно данных для расчёта.</div>
+    }
+</div>

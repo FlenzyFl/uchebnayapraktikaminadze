@@ -1,0 +1,21 @@
+@page "{id:int}"
+@model CondiService.Web.Pages.Requests.DeleteModel
+@{
+    ViewData["Title"] = $"Удаление №{Model.Item.Id}";
+}
+
+<h1 class="h1">Удалить заявку №@Model.Item.Id?</h1>
+
+<div class="alert alert--warning">
+    Это действие необратимо. Комментарии к заявке также будут удалены.
+</div>
+
+<div class="card">
+    <div><b>@Model.Item.EquipmentType</b> – @Model.Item.DeviceModel</div>
+    <div class="muted" style="margin-top:6px;">@Model.Item.CustomerFullName • @Model.Item.CustomerPhone</div>
+
+    <form method="post" style="margin-top:14px;" class="actions">
+        <button class="btn btn--danger" type="submit">Да, удалить</button>
+        <a class="btn btn--ghost" asp-page="/Requests/Details" asp-route-id="@Model.Item.Id">Отмена</a>
+    </form>
+</div>

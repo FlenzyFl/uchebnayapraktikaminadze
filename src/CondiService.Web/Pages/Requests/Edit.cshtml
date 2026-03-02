@@ -1,0 +1,112 @@
+@page "{id:int}"
+@model CondiService.Web.Pages.Requests.EditModel
+@using CondiService.Web.Services
+@{
+    ViewData["Title"] = $"Редактирование №{Model.Item.Id}";
+}
+
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+    <div>
+        <h1 class="h1">Редактирование заявки №@Model.Item.Id</h1>
+        <div class="muted">Меняйте статус, описание проблемы и исполнителя. Удаление – только менеджер.</div>
+    </div>
+    <a class="btn btn--ghost" asp-page="/Requests/Details" asp-route-id="@Model.Item.Id">Назад</a>
+</div>
+
+<div class="card" style="margin-top:14px;">
+    <form method="post" class="form">
+        <input type="hidden" asp-for="Item.Id" />
+
+        <div class="grid grid--2">
+            <label class="field">
+                <span class="field__label">Статус</span>
+                <select class="input" asp-for="Item.Status" asp-items="Model.StatusItems"></select>
+            </label>
+            <label class="field">
+                <span class="field__label">Исполнитель</span>
+                <select class="input" asp-for="Item.AssignedSpecialistId" asp-items="Model.SpecialistItems">
+                    <option value="">— не назначен —</option>
+                </select>
+            </label>
+            @{
+                var canEditDeadline = User.IsInRole(SeedData.RoleOperator) || User.IsInRole(SeedData.RoleManagerName) || User.IsInRole(SeedData.RoleQualityManager);
+            }
+            @if (canEditDeadline)
+            {
+                <label class="field">
+                    <span class="field__label">Срок выполнения (дедлайн)</span>
+                    <input class="input" type="date" asp-for="Item.DueAt" />
+                    <span class="field__hint">Если срок продлевается менеджером по качеству – отметьте согласование с заказчиком.</span>
+                </label>
+
+                <label class="field">
+                    <span class="field__label">Согласовано продление с заказчиком</span>
+                    <div class="check">
+                        <input type="checkbox" asp-for="DueExtensionApprovedInput" />
+                        <span>Да, согласовано</span>
+                    </div>
+                    <span class="field__error">@Html.ValidationMessage("DueExtensionApprovedInput")</span>
+                </label>
+
+                <label class="field" style="grid-column:1/-1">
+                    <span class="field__label">Комментарий к продлению</span>
+                    <input class="input" asp-for="DueExtensionCommentInput" placeholder="Коротко: с кем согласовано, почему перенос" />
+                </label>
+            }
+            else
+            {
+                <label class="field">
+                    <span class="field__label">Срок выполнения (дедлайн)</span>
+                    <input class="input" type="date" value="@Model.Item.DueAt.ToString("yyyy-MM-dd")" disabled />
+                    <input type="hidden" asp-for="Item.DueAt" />
+                </label>
+            }
+
+        </div>
+
+        <label class="field">
+            <span class="field__label">Описание проблемы</span>
+            <textarea class="input" asp-for="Item.ProblemDescription"></textarea>
+            <span class="field__error" asp-validation-for="Item.ProblemDescription"></span>
+        </label>
+
+        <div class="grid grid--2">
+            <label class="field">
+                <span class="field__label">Тип оборудования</span>
+	            <input class="input" asp-for="Item.EquipmentType" readonly="@(Model.CanEditCustomerFields ? (string?)null : "readonly")" />
+            </label>
+            <label class="field">
+                <span class="field__label">Модель устройства</span>
+	            <input class="input" asp-for="Item.DeviceModel" readonly="@(Model.CanEditCustomerFields ? (string?)null : "readonly")" />
+            </label>
+        </div>
+
+        <div class="grid grid--2">
+            <label class="field">
+                <span class="field__label">ФИО заказчика</span>
+	            <input class="input" asp-for="Item.CustomerFullName" readonly="@(Model.CanEditCustomerFields ? (string?)null : "readonly")" />
+            </label>
+            <label class="field">
+                <span class="field__label">Телефон</span>
+	            <input class="input" asp-for="Item.CustomerPhone" readonly="@(Model.CanEditCustomerFields ? (string?)null : "readonly")" />
+            </label>
+        </div>
+
+        <label class="field">
+            <span class="field__label">Комплектующие (список/комментарий)</span>
+            <textarea class="input" asp-for="Item.RepairParts" placeholder="Например: вентилятор, датчик температуры"></textarea>
+        </label>
+
+        <div class="actions">
+            <button class="btn" type="submit">Сохранить</button>
+            <a class="btn btn--ghost" asp-page="/Requests/Details" asp-route-id="@Model.Item.Id">Отмена</a>
+        </div>
+
+        @if (!Model.CanEditCustomerFields)
+        {
+            <div class="muted small" style="margin-top:10px;">
+                Примечание: поля клиента доступны для изменения только ролям «Оператор» и «Менеджер».
+            </div>
+        }
+    </form>
+</div>

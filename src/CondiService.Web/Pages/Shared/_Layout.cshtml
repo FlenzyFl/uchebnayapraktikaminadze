@@ -1,0 +1,93 @@
+@using CondiService.Web.Services
+@using Microsoft.AspNetCore.Mvc.Rendering
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@{
+    var flash = NotificationService.Parse(TempData[NotificationService.TempDataKey]?.ToString());
+    var me = User.Identity?.IsAuthenticated == true ? await UserManager.GetUserAsync(User) : null;
+    string path = ViewContext.HttpContext.Request.Path.Value ?? "";
+    bool IsActive(string p) => path.StartsWith(p, StringComparison.OrdinalIgnoreCase);
+}
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] – Конди</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+<div class="app">
+    <aside class="sidebar">
+        <a class="brand" asp-page="/Index">
+            <span class="brand__dot"></span>
+            <span>CondiService</span>
+        </a>
+
+        <div class="sidebar__section">
+            <div class="sidebar__title">Навигация</div>
+            <nav class="snav">
+                <a class="@(IsActive("/Requests") ? "active" : "")" asp-page="/Requests/Index">
+                    <span>Заявки</span>
+                </a>
+
+                @if (User.IsInRole(SeedData.RoleQualityManager))
+                {
+                    <a class="@(IsActive("/Quality") ? "active" : "")" asp-page="/Quality/Index">
+                        <span>Качество</span>
+                        <span class="badge badge--warn">QM</span>
+                    </a>
+                }
+
+                @if (User.IsInRole(SeedData.RoleManagerName))
+                {
+                    <a class="@(IsActive("/Stats") ? "active" : "")" asp-page="/Stats/Index"><span>Статистика</span></a>
+                    <a class="@(IsActive("/Users") ? "active" : "")" asp-page="/Users/Index"><span>Пользователи</span></a>
+                }
+            </nav>
+        </div>
+
+        <div class="sidebar__section">
+            <div class="sidebar__title">Аккаунт</div>
+            <div class="snav">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-page="/Account/Logout"><span>Выйти</span></a>
+                }
+                else
+                {
+                    <a asp-page="/Account/Login"><span>Войти</span></a>
+                }
+            </div>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="container">
+            <div class="topbar">
+                <div>
+                    <div class="small">ООО «Конди»</div>
+                    <div class="muted">@DateTime.Now.ToString("yyyy-MM-dd HH:mm")</div>
+                </div>
+                <div class="topbar__right">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <span class="userchip">@me?.FullName · @User.Identity?.Name</span>
+                    }
+                </div>
+            </div>
+
+            @if (flash != null)
+            {
+                <div class="alert alert--@flash.Value.type">
+                    <div>@flash.Value.message</div>
+                </div>
+            }
+
+            @RenderBody()
+        </div>
+    </main>
+</div>
+
+@RenderSection("Scripts", required: false)
+</body>
+</html>

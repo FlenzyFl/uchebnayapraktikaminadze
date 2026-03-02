@@ -1,0 +1,87 @@
+@page
+@model CondiService.Web.Pages.Requests.IndexModel
+@using CondiService.Web.Services
+@{
+    ViewData["Title"] = "Заявки";
+}
+
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+    <div>
+        <h1 class="h1">Заявки</h1>
+        <div class="muted">Поиск по номеру/модели/описанию, фильтр по статусу.</div>
+    </div>
+
+    @if (User.IsInRole(SeedData.RoleOperator) || User.IsInRole(SeedData.RoleManagerName))
+    {
+        <a class="btn" asp-page="/Requests/Create">+ Новая заявка</a>
+    }
+</div>
+
+<div class="card" style="margin-top:14px;">
+    <form method="get" class="grid" style="grid-template-columns:2fr 1fr 1fr auto;align-items:end;">
+        <label class="field">
+            <span class="field__label">Поиск</span>
+            <input class="input" name="q" value="@Model.Query" placeholder="например: 3 или TCL" />
+        </label>
+        <label class="field">
+            <span class="field__label">Статус</span>
+            <select name="status" class="input">
+                <option value="">Все</option>
+                @foreach (var s in Model.StatusOptions)
+                {
+                    <option value="@s.Value" selected="@(s.Value == Model.StatusFilter)">@s.Text</option>
+                }
+            </select>
+        </label>
+        <label class="field">
+            <span class="field__label">Тип оборудования</span>
+            <input class="input" name="type" value="@Model.TypeFilter" placeholder="Кондиционер" />
+        </label>
+        <button class="btn btn--ghost" type="submit">Применить</button>
+    </form>
+</div>
+
+<table class="table" style="margin-top:14px;">
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Дата</th>
+            <th>Дедлайн</th>
+            <th>Оборудование</th>
+            <th>Клиент</th>
+            <th>Статус</th>
+            <th>Исполнитель</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var r in Model.Items)
+    {
+        <tr>
+            <td><a class="nav__link" style="padding:0" asp-page="/Requests/Details" asp-route-id="@r.Id">@r.Id</a></td>
+            <td class="muted">@r.CreatedAt.ToString("yyyy-MM-dd")</td>
+            <td>@r.DueAt.ToString("yyyy-MM-dd") @if (r.Status != CondiService.Web.Models.RequestStatus.Completed && r.DueAt < DateTime.UtcNow) { <span class="badge badge--danger">Просрочено</span> }</td>
+            <td>
+                <div><b>@r.EquipmentType</b></div>
+                <div class="muted">@r.DeviceModel</div>
+            </td>
+            <td>
+                <div>@r.CustomerFullName</div>
+                <div class="muted">@r.CustomerPhone</div>
+            </td>
+            <td>@Html.Raw(Model.StatusBadge(r.Status))</td>
+            <td class="muted">@(r.AssignedSpecialist?.FullName ?? "–")</td>
+            <td>
+                <div class="actions">
+                    <a class="btn btn--ghost" asp-page="/Requests/Details" asp-route-id="@r.Id">Открыть</a>
+                </div>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@if (!Model.Items.Any())
+{
+    <div class="alert alert--info">Ничего не найдено по заданным условиям.</div>
+}

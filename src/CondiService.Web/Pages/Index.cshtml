@@ -1,0 +1,26 @@
+@page
+@model CondiService.Web.Pages.IndexModel
+@{
+    ViewData["Title"] = "Главная";
+}
+
+<h1 class="h1">Учет заявок на ремонт климатического оборудования</h1>
+
+<div class="grid grid--2">
+    <div class="card">
+        <div class="muted">Всего заявок</div>
+        <div style="font-size:2rem;font-weight:800;margin-top:6px;">@Model.Total</div>
+        <div class="muted" style="margin-top:10px;">Новых: @Model.NewCount • В работе: @Model.InProgressCount • Ожидают комплектующие: @Model.WaitingCount • Завершены: @Model.CompletedCount</div>
+        <div class="actions" style="margin-top:14px;">
+            <a class="btn" asp-page="/Requests/Index">Открыть список заявок</a>
+            @if (User.IsInRole(CondiService.Web.Services.SeedData.RoleOperator) || User.IsInRole(CondiService.Web.Services.SeedData.RoleManagerName))
+            {
+                <a class="btn btn--ghost" asp-page="/Requests/Create">Новая заявка</a>
+            }
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="muted">Входные данные</div>
+    </div>
+</div>

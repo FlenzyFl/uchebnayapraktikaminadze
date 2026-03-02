@@ -1,0 +1,87 @@
+@page
+@model CondiService.Web.Pages.Quality.IndexModel
+@{
+    ViewData["Title"] = "Качество";
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="h1">Панель качества</h1>
+        <div class="muted">Просроченные заявки и запросы помощи от специалистов.</div>
+    </div>
+    <a class="btn btn--ghost" asp-page="/Requests/Index">Все заявки</a>
+</div>
+
+<div class="grid grid--2" style="margin-top:14px;">
+    <div class="card">
+        <div class="card__title">Просроченные заявки</div>
+
+        @if (!Model.Overdue.Any())
+        {
+            <div class="alert alert--ok">Просроченных заявок нет.</div>
+        }
+        else
+        {
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Дедлайн</th>
+                            <th>Статус</th>
+                            <th>Исполнитель</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var r in Model.Overdue)
+                    {
+                        <tr>
+                            <td><b>@r.Id</b></td>
+                            <td>@r.DueAt.ToLocalTime().ToString("yyyy-MM-dd") <span class="badge badge--danger">Просрочено</span></td>
+                            <td><span class="badge">@r.Status</span></td>
+                            <td class="muted">@r.AssignedSpecialist?.FullName</td>
+                            <td style="text-align:right;">
+                                <a class="btn btn--sm" asp-page="/Requests/Details" asp-route-id="@r.Id">Открыть</a>
+                                <a class="btn btn--sm btn--ghost" asp-page="/Requests/Edit" asp-route-id="@r.Id">Продлить/Назначить</a>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+    <div class="card">
+        <div class="card__title">Запросы помощи</div>
+
+        @if (!Model.HelpRequests.Any())
+        {
+            <div class="alert alert--info">Запросов помощи нет.</div>
+        }
+        else
+        {
+            <div style="display:grid;gap:10px;">
+                @foreach (var x in Model.HelpRequests)
+                {
+                    <div class="note">
+                        <div class="note__head">
+                            <div>
+                                <b>Заявка №@x.req.Id</b>
+                                <span class="badge badge--warn">Help</span>
+                            </div>
+                            <div class="muted small">@x.comment.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</div>
+                        </div>
+                        <div class="muted small">От: @x.comment.AuthorUser?.FullName · Исполнитель: @x.req.AssignedSpecialist?.FullName</div>
+                        <div class="note__body">@x.comment.Message</div>
+                        <div class="actions">
+                            <a class="btn btn--sm" asp-page="/Requests/Details" asp-route-id="@x.req.Id">Открыть</a>
+                            <a class="btn btn--sm btn--ghost" asp-page="/Requests/Edit" asp-route-id="@x.req.Id">Назначить/Срок</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,32 @@
+@page
+@model CondiService.Web.Pages.Users.IndexModel
+@{
+    ViewData["Title"] = "Пользователи";
+}
+
+<h1 class="h1">Пользователи</h1>
+<div class="muted">Импортированы из ресурса inputDataUsers.csv. Создание/редактирование не требуется для модуля 1.</div>
+
+<table class="table" style="margin-top:14px;">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>ФИО</th>
+            <th>Телефон</th>
+            <th>Логин</th>
+            <th>Роль</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var u in Model.Users)
+    {
+        <tr>
+            <td class="muted">@u.ExternalUserId</td>
+            <td>@u.FullName</td>
+            <td class="muted">@u.Phone</td>
+            <td class="muted">@u.Login</td>
+            <td>@u.Role</td>
+        </tr>
+    }
+    </tbody>
+</table>

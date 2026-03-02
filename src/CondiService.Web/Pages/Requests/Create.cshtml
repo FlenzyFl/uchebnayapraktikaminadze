@@ -1,0 +1,54 @@
+@page
+@model CondiService.Web.Pages.Requests.CreateModel
+@{
+    ViewData["Title"] = "Новая заявка";
+}
+
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+    <div>
+        <h1 class="h1">Новая заявка</h1>
+        <div class="muted">Заполните данные клиента и описание неисправности.</div>
+    </div>
+    <a class="btn btn--ghost" asp-page="/Requests/Index">Назад</a>
+</div>
+
+<div class="card" style="margin-top:14px;">
+    <form method="post" class="form">
+        <div class="grid grid--2">
+            <label class="field">
+                <span class="field__label">Тип оборудования</span>
+                <input class="input" asp-for="Input.EquipmentType" />
+                <span class="field__error" asp-validation-for="Input.EquipmentType"></span>
+            </label>
+            <label class="field">
+                <span class="field__label">Модель устройства</span>
+                <input class="input" asp-for="Input.DeviceModel" />
+                <span class="field__error" asp-validation-for="Input.DeviceModel"></span>
+            </label>
+        </div>
+
+        <label class="field">
+            <span class="field__label">Описание проблемы</span>
+            <textarea class="input" asp-for="Input.ProblemDescription"></textarea>
+            <span class="field__error" asp-validation-for="Input.ProblemDescription"></span>
+        </label>
+
+        <div class="grid grid--2">
+            <label class="field">
+                <span class="field__label">ФИО заказчика</span>
+                <input class="input" asp-for="Input.CustomerFullName" />
+                <span class="field__error" asp-validation-for="Input.CustomerFullName"></span>
+            </label>
+            <label class="field">
+                <span class="field__label">Телефон</span>
+                <input class="input" asp-for="Input.CustomerPhone" />
+                <span class="field__error" asp-validation-for="Input.CustomerPhone"></span>
+            </label>
+        </div>
+
+        <div class="actions">
+            <button class="btn" type="submit">Создать</button>
+            <a class="btn btn--ghost" asp-page="/Requests/Index">Отмена</a>
+        </div>
+    </form>
+</div>
