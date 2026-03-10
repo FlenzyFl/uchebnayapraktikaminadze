@@ -1,0 +1,32 @@
+@{
+    ViewData["Title"] = "Главная";
+}
+
+<section class="hero">
+    <div class="hero-left">
+        <h1 class="hero-title">Учет сотрудников</h1>
+        <p class="hero-subtitle">
+            
+        </p>
+        <div class="hero-actions">
+            @if (User?.Identity?.IsAuthenticated ?? false)
+            {
+                <a asp-controller="Employees" asp-action="Index" class="btn btn-primary btn-lg">Перейти к сотрудникам</a>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg">Войти</a>
+                <a asp-controller="Account" asp-action="Register" class="btn btn-ghost btn-lg">Создать аккаунт</a>
+            }
+        </div>
+    </div>
+    <div class="hero-right">
+        <div class="hero-card">
+            <h2>Что внутри</h2>
+            <ul>
+                <li>Таблица с сотрудниками.</li>
+                <li>Способность изменять данные о сотрудниках.</li>
+            </ul>
+        </div>
+    </div>
+</section>

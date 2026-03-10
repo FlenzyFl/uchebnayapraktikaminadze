@@ -1,0 +1,7 @@
+wwwroot\img\logo.svg
+wwwroot\avatars\2_1a976862492c463c8913eebba6f5d057.png
+wwwroot\avatars\1_caa6a9a5746f4792a4f8e87502360b29.png
+wwwroot\css\site.css
+wwwroot\img\logo_light.png
+wwwroot\uploads\employees\5bbdb5f9-4363-4633-b592-4841cde1c80a.jpg
+wwwroot\uploads\employees\fd754074-d91b-4889-9bb9-b8f9d9f9d5e4.png

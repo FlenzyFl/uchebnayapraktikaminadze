@@ -1,0 +1,94 @@
+@model EmployeeManagementApp.Models.Employee
+@{
+    ViewData["Title"] = "Детали сотрудника";
+}
+
+<section class="page-header employee-header">
+    <div class="employee-header-left">
+        <div class="employee-photo">
+            @if (!string.IsNullOrEmpty(Model.PhotoPath))
+            {
+                <img src="@Model.PhotoPath" alt="Фото @Model.FullName" />
+            }
+            else
+            {
+                <div class="employee-photo-placeholder">
+                    Нет фото
+                </div>
+            }
+        </div>
+
+        <div>
+            <h1>@Model.FullName</h1>
+            <p class="page-subtitle">
+                @Model.Position
+                @if (!string.IsNullOrWhiteSpace(Model.Department))
+                {
+                    <text>• @Model.Department</text>
+                }
+            </p>
+        </div>
+    </div>
+
+    <div class="page-header-actions">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Редактировать</a>
+        <a asp-action="Index" class="btn btn-ghost">К списку</a>
+    </div>
+</section>
+
+
+<section class="card details-card">
+    <dl class="details-grid">
+        <div>
+            <dt>Дата приема</dt>
+            <dd>@Model.HireDate.ToShortDateString()</dd>
+        </div>
+        <div>
+            <dt>Дата увольнения</dt>
+            <dd>@(Model.DismissalDate?.ToShortDateString() ?? "—")</dd>
+        </div>
+        <div>
+            <dt>Оклад</dt>
+            <dd>@Model.Salary.ToString("C0", new System.Globalization.CultureInfo("ru-RU"))</dd>
+        </div>
+
+        <div>
+            <dt>Дата рождения</dt>
+            <dd>@(Model.BirthDate?.ToShortDateString() ?? "—")</dd>
+        </div>
+        <div>
+            <dt>Телефон</dt>
+            <dd>@(Model.Phone ?? "—")</dd>
+        </div>
+        <div>
+            <dt>Email</dt>
+            <dd>@(Model.Email ?? "—")</dd>
+        </div>
+
+        <div>
+            <dt>Серия и номер паспорта</dt>
+            <dd>@($"{Model.PassportSeries} {Model.PassportNumber}".Trim())</dd>
+        </div>
+        <div>
+            <dt>Кем выдан</dt>
+            <dd>@(Model.PassportIssuedBy ?? "—")</dd>
+        </div>
+        <div>
+            <dt>Дата выдачи</dt>
+            <dd>@(Model.PassportIssueDate?.ToShortDateString() ?? "—")</dd>
+        </div>
+
+        <div>
+            <dt>Адрес проживания</dt>
+            <dd>@(Model.Address ?? "—")</dd>
+        </div>
+        <div>
+            <dt>Образование</dt>
+            <dd>@(Model.Education ?? "—")</dd>
+        </div>
+        <div>
+            <dt>Опыт работы</dt>
+            <dd>@(Model.Experience ?? "—")</dd>
+        </div>
+    </dl>
+</section>

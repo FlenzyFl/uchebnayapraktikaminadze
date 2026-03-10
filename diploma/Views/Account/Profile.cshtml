@@ -1,0 +1,64 @@
+@model EmployeeManagementApp.Controllers.ProfileViewModel
+@{
+    ViewData["Title"] = "Профиль";
+    var updated = TempData["ProfileUpdated"] as bool?;
+    var passwordChanged = TempData["PasswordChanged"] as bool?;
+}
+
+<section class="page-header">
+    <div>
+        <h1>Профиль пользователя</h1>
+        <p class="page-subtitle">@Model.Username</p>
+    </div>
+</section>
+
+<section class="profile-grid">
+    <div class="profile-card">
+        @if (!string.IsNullOrWhiteSpace(Model.ExistingAvatarPath))
+        {
+            <img src="@Model.ExistingAvatarPath" alt="avatar" class="profile-avatar" />
+        }
+        else
+        {
+            var initial = string.IsNullOrWhiteSpace(Model.DisplayName) ? "U" : Model.DisplayName.Trim()[0].ToString().ToUpper();
+            <div class="profile-avatar placeholder">@initial</div>
+        }
+        <h2>@Model.DisplayName</h2>
+        <p class="profile-username">@Model.Username</p>
+
+        @if (updated == true)
+        {
+            <div class="profile-toast">Профиль обновлен.</div>
+        }
+        @if (passwordChanged == true)
+        {
+            <div class="profile-toast">Пароль успешно изменен.</div>
+        }
+    </div>
+
+    <div class="profile-form-card">
+        <form asp-action="Profile" method="post" enctype="multipart/form-data" class="form-vertical">
+            <input type="hidden" asp-for="Username" />
+            <div class="form-row">
+                <label asp-for="DisplayName"></label>
+                <input asp-for="DisplayName" class="input" />
+                <span asp-validation-for="DisplayName" class="validation"></span>
+            </div>
+            <div class="form-row">
+                <label asp-for="AvatarFile"></label>
+                <input asp-for="AvatarFile" type="file" class="input-file" />
+                <span class="hint">Рекомендуется квадратное изображение PNG/JPEG.</span>
+                <span asp-validation-for="AvatarFile" class="validation"></span>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Сохранить профиль</button>
+                <a asp-action="ChangePassword" class="btn btn-ghost">Изменить пароль</a>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

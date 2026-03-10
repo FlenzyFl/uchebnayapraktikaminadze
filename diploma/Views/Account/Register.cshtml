@@ -1,0 +1,44 @@
+@model EmployeeManagementApp.Controllers.RegisterViewModel
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<div class="center-screen">
+    <section class="auth-window">
+        <h1 class="auth-title">Создание аккаунта</h1>
+        <p class="auth-subtitle">Один логин — доступ ко всем данным по сотрудникам.</p>
+
+        <form asp-action="Register" method="post" class="form-vertical">
+            <div class="form-row">
+                <label asp-for="Username"></label>
+                <input asp-for="Username" class="input" autocomplete="username" />
+                <span asp-validation-for="Username" class="validation"></span>
+            </div>
+            <div class="form-row">
+                <label asp-for="DisplayName"></label>
+                <input asp-for="DisplayName" class="input" />
+                <span asp-validation-for="DisplayName" class="validation"></span>
+            </div>
+            <div class="form-row">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="input" autocomplete="new-password" />
+                <span asp-validation-for="Password" class="validation"></span>
+            </div>
+            <div class="form-row">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" class="input" autocomplete="new-password" />
+                <span asp-validation-for="ConfirmPassword" class="validation"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">Создать аккаунт</button>
+
+            <p class="auth-hint">
+                Уже есть аккаунт? <a asp-action="Login">Войти</a>
+            </p>
+        </form>
+    </section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

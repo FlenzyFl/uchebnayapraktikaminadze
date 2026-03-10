@@ -1,0 +1,176 @@
+@model IEnumerable<EmployeeManagementApp.Models.Employee>
+@{
+    ViewData["Title"] = "Сотрудники";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Сотрудники</h1>
+        <p class="page-subtitle">Полное досье по каждому сотруднику.</p>
+    </div>
+    <div class="page-header-actions">
+        <a asp-action="Create" class="btn btn-primary">Добавить сотрудника</a>
+        <a asp-action="ExportToExcel" class="btn btn-ghost">Экспорт в Excel</a>
+    </div>
+</section>
+
+<!-- Форма поиска -->
+<section class="card" style="margin-bottom:16px;">
+    <form method="get" class="search-grid">
+
+        <div class="form-row">
+            <label>ФИО</label>
+            <input type="text" name="fullName" class="input"
+                   value="@(Context.Request.Query["fullName"])"
+                   placeholder="Введите ФИО..." />
+        </div>
+
+        <div class="form-row">
+            <label>Должность</label>
+            <input type="text" name="position" class="input"
+                   value="@(Context.Request.Query["position"])"
+                   placeholder="Инженер, менеджер..." />
+        </div>
+
+        <div class="form-row">
+            <label>Отдел</label>
+            <input type="text" name="department" class="input"
+                   value="@(Context.Request.Query["department"])"
+                   placeholder="ИТ, управление..." />
+        </div>
+
+        <div class="form-row">
+            <label>Телефон</label>
+            <input type="text" name="phone" class="input"
+                   value="@(Context.Request.Query["phone"])"
+                   placeholder="+7..." />
+        </div>
+
+        <div class="form-row">
+            <label>Email</label>
+            <input type="text" name="email" class="input"
+                   value="@(Context.Request.Query["email"])"
+                   placeholder="example@mail.ru" />
+        </div>
+
+        <div class="form-row">
+            <label>Паспорт</label>
+            <input type="text" name="passport" class="input"
+                   value="@(Context.Request.Query["passport"])"
+                   placeholder="Серия, номер или кем выдан" />
+        </div>
+
+        <div class="form-row">
+            <label>Адрес</label>
+            <input type="text" name="address" class="input"
+                   value="@(Context.Request.Query["address"])"
+                   placeholder="Город, улица..." />
+        </div>
+
+        <div class="form-row">
+            <label>Дата приёма – от</label>
+            <input type="date" name="hireDateFrom" class="input"
+                   value="@(Context.Request.Query["hireDateFrom"])" />
+        </div>
+
+        <div class="form-row">
+            <label>Дата приёма – до</label>
+            <input type="date" name="hireDateTo" class="input"
+                   value="@(Context.Request.Query["hireDateTo"])" />
+        </div>
+
+        <div class="form-row">
+            <label>Дата увольнения — от</label>
+            <input type="date" name="dismissDateFrom" class="input"
+                   value="@(Context.Request.Query["dismissDateFrom"])" />
+        </div>
+
+        <div class="form-row">
+            <label>Дата увольнения — до</label>
+            <input type="date" name="dismissDateTo" class="input"
+                   value="@(Context.Request.Query["dismissDateTo"])" />
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Поиск</button>
+            <a asp-action="Index" class="btn btn-ghost">Сбросить</a>
+        </div>
+
+    </form>
+</section>
+
+<section class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ФИО</th>
+                <th>Должность</th>
+                <th>Отдел</th>
+                <th>Дата приема</th>
+                <th>Телефон</th>
+                <th>Email</th>
+                <th class="col-actions"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var e in Model)
+            {
+                var initial = string.IsNullOrWhiteSpace(e.FullName)
+                ? "?"
+                : e.FullName.Trim()[0].ToString().ToUpper();
+
+                <tr>
+                    <td>
+                        <div class="cell-main">
+                            <div class="avatar-circle">@initial</div>
+                            <div>
+                                <div class="cell-title">@e.FullName</div>
+                                <div class="cell-subtitle">@e.Position</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>@e.Position</td>
+                    <td>@e.Department</td>
+                    <td>@e.HireDate.ToShortDateString()</td>
+                    <td>@e.Phone</td>
+                    <td>@e.Email</td>
+                    <td class="col-actions">
+                        <a asp-action="Details" asp-route-id="@e.Id" class="link">Подробнее</a>
+                        <a asp-action="Edit" asp-route-id="@e.Id" class="link">Изменить</a>
+                        <a asp-action="Delete" asp-route-id="@e.Id" class="link link-danger">Удалить</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+
+
+<style>
+    .search-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px 20px;
+    }
+
+    .form-row {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .form-actions {
+        grid-column: 1 / -1;
+        margin-top: 10px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .input {
+        padding: 10px 14px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #fff;
+    }
+</style>

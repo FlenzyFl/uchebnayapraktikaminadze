@@ -1,0 +1,134 @@
+@model EmployeeManagementApp.Models.Employee
+
+@{
+    ViewData["Title"] = "Добавить сотрудника";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Новый сотрудник</h1>
+        <p class="page-subtitle">Заполните кадровые и контактные данные.</p>
+    </div>
+</section>
+
+<section class="card">
+    <form asp-action="Create"
+          method="post"
+          enctype="multipart/form-data"
+          class="form-grid">
+
+        <div class="form-row">
+            <label asp-for="FullName"></label>
+            <input asp-for="FullName" class="input" />
+            <span asp-validation-for="FullName" class="validation"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Position"></label>
+            <input asp-for="Position" class="input" />
+            <span asp-validation-for="Position" class="validation"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Department"></label>
+            <input asp-for="Department" class="input" />
+            <span asp-validation-for="Department" class="validation"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="HireDate"></label>
+            <input asp-for="HireDate" class="input" />
+            <span asp-validation-for="HireDate" class="validation"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="DismissalDate"></label>
+            <input asp-for="DismissalDate" class="input" />
+            <span asp-validation-for="DismissalDate" class="validation"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="BirthDate"></label>
+            <input asp-for="BirthDate" class="input" />
+            <span asp-validation-for="BirthDate" class="validation"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Phone"></label>
+            <input asp-for="Phone" class="input" />
+            <span asp-validation-for="Phone" class="validation"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Email"></label>
+            <input asp-for="Email" class="input" />
+            <span asp-validation-for="Email" class="validation"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="PassportSeries"></label>
+            <input asp-for="PassportSeries" class="input" />
+            <span asp-validation-for="PassportSeries" class="validation"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="PassportNumber"></label>
+            <input asp-for="PassportNumber" class="input" />
+            <span asp-validation-for="PassportNumber" class="validation"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="PassportIssuedBy"></label>
+            <input asp-for="PassportIssuedBy" class="input" />
+            <span asp-validation-for="PassportIssuedBy" class="validation"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="PassportIssueDate"></label>
+            <input asp-for="PassportIssueDate" class="input" />
+            <span asp-validation-for="PassportIssueDate" class="validation"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Address"></label>
+            <input asp-for="Address" class="input" />
+            <span asp-validation-for="Address" class="validation"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Education"></label>
+            <input asp-for="Education" class="input" />
+            <span asp-validation-for="Education" class="validation"></span>
+        </div>
+
+        <div class="form-row form-row-full">
+            <label asp-for="Experience"></label>
+            <textarea asp-for="Experience" class="input" rows="3"></textarea>
+            <span asp-validation-for="Experience" class="validation"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Salary"></label>
+            <input asp-for="Salary" class="input" />
+            <span asp-validation-for="Salary" class="validation"></span>
+        </div>
+
+        <!-- ФОТО -->
+        <div class="form-row form-row-full">
+            <label>Фотография сотрудника</label>
+            <input type="file"
+                   name="Photo"
+                   accept="image/*"
+                   class="input" />
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <a asp-action="Index" class="btn btn-ghost">Отмена</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

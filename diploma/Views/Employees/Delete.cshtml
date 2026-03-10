@@ -1,0 +1,20 @@
+@model EmployeeManagementApp.Models.Employee
+@{
+    ViewData["Title"] = "Удаление";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Удалить сотрудника?</h1>
+        <p class="page-subtitle">@Model.FullName (@Model.Position)</p>
+    </div>
+</section>
+
+<section class="card danger-card">
+    <p>Это действие необратимо. Сотрудник будет удален из базы.</p>
+    <form asp-action="Delete" method="post" class="form-inline">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Удалить</button>
+        <a asp-action="Index" class="btn btn-ghost">Отмена</a>
+    </form>
+</section>

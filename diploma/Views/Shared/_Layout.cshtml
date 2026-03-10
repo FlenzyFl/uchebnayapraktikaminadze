@@ -1,0 +1,108 @@
+@{
+    var displayName = User?.Claims.FirstOrDefault(c => c.Type == "displayName")?.Value ?? User?.Identity?.Name;
+    var avatarPath = User?.Claims.FirstOrDefault(c => c.Type == "avatarPath")?.Value;
+    var initials = (displayName ?? "U").Trim();
+    initials = string.IsNullOrEmpty(initials) ? "U" : initials[..1].ToUpper();
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Главный Элемент Урала</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body class="theme-dark">
+    <div class="window">
+        <header class="window-header">
+
+
+            
+            <div class="window-title">
+                <a asp-controller="Home" asp-action="Index" class="logo-link">
+                    <img src="/img/logo.svg" alt="Main Element" class="logo-img logo-dark" />
+                    <img src="/img/logo_light.png" alt="Main Element" class="logo-img logo-light" />
+                </a>
+            </div>
+
+            <div class="window-right">
+                <button type="button" id="themeToggle" class="btn btn-ghost btn-xs">
+                    Светлая тема
+                </button>
+
+                @if (User?.Identity?.IsAuthenticated ?? false)
+                {
+                    <a asp-controller="Account" asp-action="Profile" class="user-pill">
+                        @if (!string.IsNullOrWhiteSpace(avatarPath))
+                        {
+                            <img src="@avatarPath" alt="avatar" class="user-avatar-img" />
+                        }
+                        else
+                        {
+                            <span class="user-avatar">@initials</span>
+                        }
+                        <span class="user-name">@displayName</span>
+                    </a>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form">
+                        <button type="submit" class="btn btn-ghost btn-xs">Выход</button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-xs">Войти</a>
+                }
+            </div>
+        </header>
+
+        <nav class="window-nav">
+            <a asp-controller="Home" asp-action="Index" class="nav-link">Главная</a>
+            <a asp-controller="Employees" asp-action="Index" class="nav-link">Сотрудники</a>
+        </nav>
+
+        <main class="window-body">
+            @RenderBody()
+        </main>
+
+        <footer class="window-footer">
+            © @DateTime.Now.Year Главный Элемент Урала
+        </footer>
+    </div>
+
+    @RenderSection("Scripts", required: false)
+
+    <script>
+        (function () {
+            const body = document.body;
+            const btn = document.getElementById('themeToggle');
+            if (!btn) return;
+
+            function applyTheme(theme) {
+                body.classList.remove('theme-dark', 'theme-light');
+                body.classList.add('theme-' + theme);
+                try {
+                    localStorage.setItem('theme', theme);
+                } catch (e) { }
+
+                btn.textContent = theme === 'dark'
+                    ? 'Светлая тема'
+                    : 'Тёмная тема';
+            }
+
+            let saved = null;
+            try {
+                saved = localStorage.getItem('theme');
+            } catch (e) { }
+
+            const initial = saved === 'light' || saved === 'dark' ? saved : 'dark';
+            applyTheme(initial);
+
+            btn.addEventListener('click', function () {
+                const current = body.classList.contains('theme-dark') ? 'dark' : 'light';
+                const next = current === 'dark' ? 'light' : 'dark';
+                applyTheme(next);
+            });
+        })();
+    </script>
+</body>
+</html>
